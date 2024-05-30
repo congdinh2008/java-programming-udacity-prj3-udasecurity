@@ -9,7 +9,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.udacity.catpoint</groupId>
     <artifactId>image</artifactId>
     <version>1.0-SNAPSHOT</version>
 
