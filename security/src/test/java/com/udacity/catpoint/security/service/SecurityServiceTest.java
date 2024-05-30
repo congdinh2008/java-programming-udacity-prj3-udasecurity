@@ -80,7 +80,7 @@ public class SecurityServiceTest {
      * Test 01: If alarm is armed and a sensor becomes activated, put the system into pending alarm status.
      */
     @Test
-    void testChangeStatusToPendingWhenSystemArmedAndSensorActivated() {
+    void changeStatusToPending_WhenSystemArmedAndSensorActivated() {
         // If the system is armed and a sensor is activated, the alarm status should change to pending
         when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.NO_ALARM);
@@ -93,7 +93,7 @@ public class SecurityServiceTest {
      * Test 02: If alarm is armed and a sensor becomes activated and the system is already pending alarm, set the alarm status to alarm.
      */
     @Test
-    void testChangeStatusToAlarmWhenSystemArmedAndSensorActivatedAndPendingState() {
+    void changeStatusToAlarm_WhenSystemArmedAndSensorActivatedAndPendingState() {
         when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
         securityService.changeSensorActivationStatus(sensor, true);
@@ -105,7 +105,7 @@ public class SecurityServiceTest {
      * Test 03: If pending alarm and all sensors are inactive, return to no alarm state.
      */
     @Test
-    void testReturnNoAlarmStateWhenPendingAlarmAndSensorInactive() {
+    void returnNoAlarmState_WhenPendingAlarmAndSensorInactive() {
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
         sensor.setActive(false);
         securityService.changeSensorActivationStatus(sensor);
@@ -120,7 +120,7 @@ public class SecurityServiceTest {
      */
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testChangeSensorShouldNotAffectAlarmStateWhenAlarmIsActive(boolean status) {
+    void changeSensorShouldNotAffectAlarmState_WhenAlarmIsActive(boolean status) {
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.ALARM);
         securityService.changeSensorActivationStatus(sensor, status);
 
@@ -131,7 +131,7 @@ public class SecurityServiceTest {
      * Test 05: If a sensor is activated while already active and the system is in pending state, change it to alarm state.
      */
     @Test
-    void testChangeStatusToAlarmWhenSensorActivatedWhileActiveAndPendingAlarm() {
+    void changeStatusToAlarm_WhenSensorActivatedWhileActiveAndPendingAlarm() {
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
         sensor.setActive(true);
         securityService.changeSensorActivationStatus(sensor, true);
@@ -146,7 +146,7 @@ public class SecurityServiceTest {
      */
     @ParameterizedTest
     @EnumSource(value = AlarmStatus.class, names = { "NO_ALARM", "PENDING_ALARM", "ALARM" })
-    void testNoChangesToAlarmStateWhenSensorDeactivatedWhileInactive(AlarmStatus status) {
+    void noChangesToAlarmState_WhenSensorDeactivatedWhileInactive(AlarmStatus status) {
         when(securityRepository.getAlarmStatus()).thenReturn(status);
         sensor.setActive(false);
         securityService.changeSensorActivationStatus(sensor, false);
@@ -158,7 +158,7 @@ public class SecurityServiceTest {
      * Test 07: If the image service identifies an image containing a cat while the system is armed-home, put the system into alarm status.
      */
     @Test
-    void testChangeStatusToAlarmWhenImageServiceIdentifiesCatWhileAlarmArmedHome() {
+    void changeStatusToAlarm_WhenImageServiceIdentifiesCatWhileAlarmArmedHome() {
         BufferedImage catImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
         when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
         when(imageService.imageContainsCat(any(), ArgumentMatchers.anyFloat())).thenReturn(true);
@@ -171,7 +171,7 @@ public class SecurityServiceTest {
      * Test 08: If the image service identifies an image that does not contain a cat, change the status to no alarm as long as the sensors are not active.
      */
     @Test
-    void testChangeStatusToNoAlarmAsLongSensorsNotActiveWhenImageServiceIdentifiesNoCatImage() {
+    void changeStatusToNoAlarmAsLongSensorsNotActive_WhenImageServiceIdentifiesNoCatImage() {
         Set<Sensor> sensors = getSensors(false, 3);
         lenient().when(securityRepository.getSensors()).thenReturn(sensors);
         lenient().when(imageService.imageContainsCat(any(), ArgumentMatchers.anyFloat())).thenReturn(false);
@@ -184,7 +184,7 @@ public class SecurityServiceTest {
      * Test 09: If the system is disarmed, set the status to no alarm.
      */
     @Test
-    void testSetNoAlarmStateWhenSystemDisarmed() {
+    void setNoAlarmState_WhenSystemDisarmed() {
         securityService.setArmingStatus(ArmingStatus.DISARMED);
 
         verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.NO_ALARM);
@@ -197,7 +197,7 @@ public class SecurityServiceTest {
      */
     @ParameterizedTest
     @EnumSource(value = ArmingStatus.class, names = { "ARMED_HOME", "ARMED_AWAY" })
-    void testResetSensorsToInactiveWhenSystemArmed(ArmingStatus status) {
+    void resetSensorsToInactive_WhenSystemArmed(ArmingStatus status) {
         Set<Sensor> sensors = getSensors(true, 3);
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
         when(securityRepository.getSensors()).thenReturn(sensors);
@@ -210,7 +210,7 @@ public class SecurityServiceTest {
      * Test 11: If the system is armed-home while the camera shows a cat, set the alarm status to alarm.
      */
     @Test
-    void testChangeStatusToAlarmWhenSystemArmedHomeWhileImageServiceIdentifiesCat() {
+    void changeStatusToAlarm_WhenSystemArmedHome_WhileImageServiceIdentifiesCat() {
         BufferedImage image = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
         when(imageService.imageContainsCat(any(), anyFloat())).thenReturn(true);
         when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
@@ -227,7 +227,7 @@ public class SecurityServiceTest {
      */
     @ParameterizedTest
     @EnumSource(value = AlarmStatus.class, names = { "NO_ALARM", "PENDING_ALARM" })
-    void testNoChangesToArmingStateWhenSystemDisarmedAndSensorActivated(AlarmStatus status) {
+    void noChangesToArmingState_WhenSystemDisarmedAndSensorActivated(AlarmStatus status) {
         when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
         when(securityRepository.getAlarmStatus()).thenReturn(status);
         securityService.changeSensorActivationStatus(sensor, true);
@@ -240,7 +240,7 @@ public class SecurityServiceTest {
         * the status should be changed to PENDING_ALARM after changing the sensor activation status.
         */
     @Test
-    void testChangeStatusToPendingWhenAlarmStateAndSystemDisarmed() {
+    void changeStatusToPending_WhenAlarmStateAndSystemDisarmed() {
         when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.ALARM);
         securityService.changeSensorActivationStatus(sensor);
