@@ -15,7 +15,7 @@ import java.util.prefs.Preferences;
  */
 public class PretendDatabaseSecurityRepositoryImpl implements SecurityRepository{
 
-    private Set<Sensor> sensors;
+    private final Set<Sensor> sensors;
     private AlarmStatus alarmStatus;
     private ArmingStatus armingStatus;
 

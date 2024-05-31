@@ -58,11 +58,19 @@ public class SecurityService {
     private void catDetected(Boolean cat) {
         if (cat && getArmingStatus() == ArmingStatus.ARMED_HOME) {
             setAlarmStatus(AlarmStatus.ALARM);
-        } else {
+        } else if (!cat && allSensorsDeactivated()){
             setAlarmStatus(AlarmStatus.NO_ALARM);
         }
 
         statusListeners.forEach(sl -> sl.catDetected(cat));
+    }
+
+    private boolean allSensorsDeactivated() {
+        Set<Sensor> sensors = getSensors();
+        for (Sensor sensor: sensors) {
+            if (sensor.getActive()) return false;
+        }
+        return true;
     }
 
     /**
@@ -126,7 +134,6 @@ public class SecurityService {
         switch (securityRepository.getAlarmStatus()) {
             case NO_ALARM -> setAlarmStatus(AlarmStatus.PENDING_ALARM);
             case PENDING_ALARM -> setAlarmStatus(AlarmStatus.ALARM);
-            default -> throw new IllegalArgumentException("Unexpected value: " + securityRepository.getAlarmStatus());
         }
     }
 
@@ -138,7 +145,6 @@ public class SecurityService {
         switch (securityRepository.getAlarmStatus()) {
             case PENDING_ALARM -> setAlarmStatus(AlarmStatus.NO_ALARM);
             case ALARM -> setAlarmStatus(AlarmStatus.PENDING_ALARM);
-            default -> throw new IllegalArgumentException("Unexpected value: " + securityRepository.getAlarmStatus());
         }
     }
 
